@@ -1,0 +1,35 @@
+# Run quiz grader on every push and pull request
+name: Grade Quiz
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run quiz grader
+        id: grade
+        run: |
+          python grader.py
+          echo "exitcode=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Check result
+        run: |
+          if [ "${{ steps.grade.outputs.exitcode }}" = "0" ]; then
+            echo "::notice::Quiz passed!"
+          else
+            echo "::error::Quiz did not pass. Check the log above for wrong answers."
+            exit 1
+          fi
