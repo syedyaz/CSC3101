@@ -70,6 +70,20 @@ def main() -> int:
     pct = (correct / total * 100) if total else 0
     passed = pct >= PASS_PERCENT
 
+    # Write result for artifact (instructor can collect all into a table)
+    result_path = Path(__file__).parent / "quiz_result.json"
+    with open(result_path, "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "score": correct,
+                "total": total,
+                "percentage": round(pct, 1),
+                "passed": passed,
+            },
+            f,
+            indent=2,
+        )
+
     print(f"Score: {correct}/{total} ({pct:.0f}%)")
     if wrong:
         print("\nIncorrect questions:")

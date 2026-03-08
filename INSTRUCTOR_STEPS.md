@@ -107,5 +107,6 @@ In both options, **you do not run the grader manually**; GitHub Actions runs it 
 | See if a submission passed      | Repo → **Actions** → open latest run → **grade** job → read PASS/FAIL and score. |
 | Change pass threshold (e.g. 80%)| Edit `PASS_PERCENT` in `grader.py` (e.g. to `80`) and push. |
 | Change correct answers          | Edit the `QUIZ_ANSWERS` secret in Settings → Secrets and variables → Actions. |
+| Compile all results into a table | Run `python collect_quiz_results.py syedyaz/CSC3101` (see Part D below). |
 
 Once the secret is set and one run shows a score and PASS/FAIL, checking is automated and you don’t need to check the quiz manually.

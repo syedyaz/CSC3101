@@ -28,6 +28,36 @@ jobs:
           echo "exitcode=$?" >> $GITHUB_OUTPUT
         continue-on-error: true
 
+      - name: Create result artifact
+        if: always()
+        run: |
+          python3 << 'PYEOF'
+          import json, os
+          out = {
+            "actor": os.environ.get("GITHUB_ACTOR", ""),
+            "run_id": os.environ.get("GITHUB_RUN_ID", ""),
+            "run_number": os.environ.get("GITHUB_RUN_NUMBER", ""),
+            "run_url": os.environ.get("GITHUB_SERVER_URL", "") + "/" + os.environ.get("GITHUB_REPOSITORY", "") + "/actions/runs/" + os.environ.get("GITHUB_RUN_ID", ""),
+          }
+          if os.path.exists("quiz_result.json"):
+            with open("quiz_result.json") as f:
+              out.update(json.load(f))
+          else:
+            out["error"] = "no_grade"
+            out["score"] = 0
+            out["total"] = 10
+            out["passed"] = False
+          with open("quiz_result.json", "w") as f:
+            json.dump(out, f, indent=2)
+          PYEOF
+
+      - name: Upload quiz result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quiz-result-${{ github.run_number }}
+          path: quiz_result.json
+
       - name: Check result
         run: |
           if [ "${{ steps.grade.outputs.exitcode }}" = "0" ]; then
