@@ -10,6 +10,9 @@ on:
 jobs:
   grade:
     runs-on: ubuntu-latest
+    env:
+      # Solution key is stored in repo/org secret — students never see it
+      QUIZ_ANSWERS: ${{ secrets.QUIZ_ANSWERS }}
     steps:
       - uses: actions/checkout@v4
 

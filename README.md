@@ -11,7 +11,7 @@ The quiz is graded automatically on GitHub when students push or open a pull req
 |---------------|--------|
 | `quiz_lecture1.md` | Quiz questions (10 MCQs). Students read this. |
 | `answers.json` | **Students edit this** — they set Q1–Q10 to "A", "B", "C", or "D". |
-| `grader.py` | Script that checks `answers.json` and prints score. Used by GitHub Actions. |
+| `grader.py` | Script that checks `answers.json`; solution key is **not** in the repo (supplied via GitHub secret). |
 | `.github/workflows/grade-quiz.yml` | GitHub Action that runs the grader on every push/PR. |
 | `Lecture-1.pdf` | Lecture slides (reference). |
 
@@ -42,7 +42,24 @@ git push -u origin main
 
 Replace `YOUR_USERNAME` and `YOUR_REPO_NAME` with your GitHub username and repo name.
 
-### 3. Confirm automatic grading
+### 3. Add the solution key as a secret (students cannot see answers)
+
+The correct answers are **not** in the repo. You store them in a GitHub secret so that:
+- Grading still works when students push (Actions has access to the secret).
+- Students cannot see the solutions when they clone the repo.
+
+1. On GitHub, open your repo → **Settings** → **Secrets and variables** → **Actions**.
+2. Click **New repository secret**.
+3. **Name:** `QUIZ_ANSWERS`
+4. **Value:** a single-line JSON object with the correct answers, for example:
+   ```json
+   {"Q1":"B","Q2":"C","Q3":"C","Q4":"A","Q5":"B","Q6":"C","Q7":"D","Q8":"B","Q9":"B","Q10":"B"}
+   ```
+   Replace the values with your actual correct answers (A/B/C/D for each Q1–Q10). No spaces. Save the secret.
+
+If you use **GitHub Classroom**: add the same secret at the **organization** level (Settings → Secrets and variables → Actions) so all student assignment repos can use it.
+
+### 4. Confirm automatic grading
 
 - Open the repo on GitHub → **Actions** tab.
 - You should see the workflow **Grade Quiz**. It runs on every push and pull request to `main` (or `master`).
@@ -76,7 +93,7 @@ Replace `YOUR_USERNAME` and `YOUR_REPO_NAME` with your GitHub username and repo 
    ```bash
    python grader.py
    ```
-   You’ll see your score and which answers are wrong (but not the correct letter). Fix answers and run again if you want.
+   You’ll see your score and which answers are wrong — the solution key is not in the repo, so your score is only shown when you push to GitHub.
 
 5. **Push to GitHub**  
    ```bash
